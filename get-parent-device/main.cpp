@@ -1,5 +1,5 @@
 /**
- * get-device-parent 
+ * get-parent-device
  * =====================
  *
  *
@@ -179,7 +179,7 @@ PWCHAR GetExecutableName(PWCHAR pszExecutablePath) {
 }
 
 /**
- * get-device-parent entry point.
+ * get-parent-device entry point.
  *
  * Program takes two arguments:
  *
