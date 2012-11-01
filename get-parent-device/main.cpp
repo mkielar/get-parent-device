@@ -138,7 +138,7 @@ void ShowHelp(PWCHAR pszProgramName) {
 
 	wprintf(L"\tDII     - Device Instance ID of the Device whose parent is to be found\n");
 	wprintf(L"\tPATTERN - Regular expression to match Parent's Device Instance ID\n");
-    wprintf(L"\n");
+	wprintf(L"\n");
 
 	wprintf(L"Examples:\n\n");
 
