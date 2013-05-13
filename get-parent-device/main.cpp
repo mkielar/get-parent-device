@@ -64,10 +64,15 @@
 #pragma comment (lib, "setupapi.lib")
 #pragma comment (lib, "cfgmgr32.lib")
 
+// initguid.h must be included first or else we get 
+// "LNK2001: unresolved external symbol _GUID_DEVINTERFACE_USB_DEVICE" errors
+#include <initguid.h>
+
 #include <windows.h>  
 
 #include <setupapi.h> 
 #include <cfgmgr32.h>
+#include <usbiodef.h>
 
 #include <regex>
 
@@ -76,6 +81,9 @@
 #define ERR_BAD_ARGUMENTS 1;
 #define ERR_NO_DEVICES_FOUND 2;
 #define ERR_NO_DEVICE_INFO 3;
+
+
+#define GUID_DISK_DRIVE_STRING L"{21EC2020-3AEA-1069-A2DD-08002B30309D}"
 
 /**
  * Finds a parent Device Instance ID for given hCurrentDeviceInstanceId and returns it's value (as string) and handle.
@@ -199,7 +207,7 @@ int main(void) {
 	// Input arguments as WCHAR - not using main function arguments, as they are "hardly" convertable to PWCHAR
 	int argc;
 	PWCHAR *argv = CommandLineToArgvW(GetCommandLine(), &argc);
-
+	
 	// Check argument count
 	if (argc != 3) {
 		ShowHelp(GetExecutableName(argv[0]));
@@ -212,9 +220,14 @@ int main(void) {
 	// Pattern to match parent's Device Instance ID - w.g. "USB\\VID_(\w+)&PID_(\w+)\\(?!.*[&_].*)(\w+)"
 	PWCHAR pszParentDeviceInstanceIdPattern = argv[2];
 
-	// Get matching devices info
-	HDEVINFO devInfo = SetupDiGetClassDevs(NULL, pszSearchedDeviceInstanceId, NULL, DIGCF_PRESENT | DIGCF_ALLCLASSES);
 	
+	// GUID to match devices by class
+	GUID guid;
+	CLSIDFromString(GUID_DISK_DRIVE_STRING, &guid);
+	
+	// Get matching devices info
+	HDEVINFO devInfo = SetupDiGetClassDevs(&guid, NULL, NULL, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+
 	// Device Instance ID as string
 	WCHAR szDeviceInstanceId[MAX_DEVICE_ID_LEN];
 
@@ -230,7 +243,7 @@ int main(void) {
 			// Read Device Instance ID of current device
 			memset(szDeviceInstanceId, 0, MAX_DEVICE_ID_LEN);
 			SetupDiGetDeviceInstanceId(devInfo, &devInfoData, szDeviceInstanceId, MAX_PATH, 0);
-
+			
 			// Case insensitive comparison (because Device Instance IDs can vary?)
 			if (lstrcmpi(pszSearchedDeviceInstanceId, szDeviceInstanceId) == 0) {
 				
@@ -256,7 +269,7 @@ int main(void) {
 							
 							// Parent Device Instance ID matches given regexp - print it out and exit
 							wprintf(L"%s\n", pszParentDeviceInstanceId);
-							exit(0);
+							return 0;
 							
 						}
 

@@ -13,8 +13,16 @@ This program compiled without problems with `Visual Studio 2012 Express Edition 
 
 The `Windows Driver Kit` is required, because program uses [`SetupAPI` functions][SetupAPI] which are a part of `Windows Driver Kit`.
 
-#### Usage
+#### Running
 
+To run, the program requires [MSVC Redistributable][MSVCR] Package installed, or at least, requires the following files from 
+`c:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x86\Microsoft.VC110.CRT` to be distributed along with the executable:
+
+ * msvcp110.dll 
+ * msvcr110.dll 
+ * vccorlib110.dll 
+
+#### Usage
 
         get-parent-device.exe DII PATTERN
 
@@ -40,3 +48,5 @@ The `Windows Driver Kit` is required, because program uses [`SetupAPI` functions
 [main.cpp]: https://github.com/mkielar/get-parent-device/blob/master/get-parent-device/main.cpp
 
 [SetupAPI]: http://msdn.microsoft.com/en-us/library/windows/hardware/ff550855%28v=vs.85%29.aspx
+
+[MSVCR]: http://www.microsoft.com/en-us/download/details.aspx?id=30679
